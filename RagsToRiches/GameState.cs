@@ -9,13 +9,22 @@ namespace RagsToRiches
 
         public int LeftNumber => StartTransforms.Any() ? StartTransforms.Last().Result : Start;
 
+        public int Turns => 1 + StartTransforms.Count;
 
-        public GameState? TryApply(TransformType transformType)
+        public int? Number(int index) =>
+            index == 0 ? Start :
+            index > StartTransforms.Count ? null:
+            StartTransforms[index - 1].Result;
+
+        public GameState? TryApply(TransformType transformType, int index)
         {
-            var newLeft = transformType.Function(LeftNumber);
-            if (newLeft is null)
-                return null;
-            var newTransforms = StartTransforms.Add(new Transform(transformType, newLeft.Value));
+            var number = Number(index);
+
+            if(number is null)return null;
+            var newLeft = transformType.Function(number.Value);
+            if (newLeft is null) return null;
+
+            var newTransforms = StartTransforms.GetRange(0, index).Add(new Transform(transformType, newLeft.Value));
 
             return this with {StartTransforms = newTransforms};
         }

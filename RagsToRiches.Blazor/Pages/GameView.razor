@@ -1,0 +1,54 @@
+﻿@page "/"
+@using Fluxor
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge">
+
+    <MudText Typo="Typo.h6">@(GameState.Value.Turns)/@GameState.Value.ExpectedTurns  Turns</MudText>
+
+    <MudMenu Label="@GameState.Value.Start.ToString()" Direction="Direction.Bottom">
+        @foreach (var transform in Transform.GetPossibleTransforms(GameState.Value.Start))
+        {
+            <MudMenuItem OnClick="() => ApplyTransform(transform, 0)">@transform.Text</MudMenuItem>
+        }
+    </MudMenu>
+
+    @for (var index = 0; index < GameState.Value.StartTransforms.Count; index++)
+    {
+        var startTransform = GameState.Value.StartTransforms[index];
+        var index1 = index;
+
+        <MudMenu Label="@startTransform.Result.ToString()" Direction="Direction.Bottom">
+
+            <MudMenuItem OnClick="() => RemoveTransform(index1)">x</MudMenuItem>
+            @foreach (var transform in Transform.GetPossibleTransforms(startTransform.Result))
+            {
+                <MudMenuItem OnClick="() => ApplyTransform(transform, index1 + 1)">@transform.Text</MudMenuItem>
+            }
+
+        </MudMenu>
+    }
+
+    <MudChip Color="@(GameState.Value.IsWon ? Color.Success : Color.Default)" Text="@GameState.Value.Finish.ToString()"></MudChip>
+</MudContainer>
+
+
+@code
+{
+    [Inject]
+    private IState<GameState> GameState { get; set; }
+
+    [Inject]
+    public IDispatcher Dispatcher { get; set; }
+
+    public void ApplyTransform(Transform transform, int index)
+    {
+        Dispatcher.Dispatch(new ApplyTransformAction(transform.TransformType,  index));
+    }
+
+    public void RemoveTransform(int index)
+    {
+        Dispatcher.Dispatch(new RemoveTransformAction(index));
+    }
+}
