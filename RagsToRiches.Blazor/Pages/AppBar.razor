@@ -1,0 +1,24 @@
+﻿@using Fluxor
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<MudAppBar Elevation="1">
+    <MudText Typo="Typo.h5" Class="ml-3">Application</MudText>
+    <MudAppBarSpacer />
+    <MudIconButton Icon="@Icons.Material.Filled.Casino" OnClick="NewGame" Color="Color.Inherit" Edge="Edge.End" />
+</MudAppBar>
+
+@code
+{
+    [Inject]
+    public IDispatcher Dispatcher { get; set; }
+
+    public void NewGame()
+    {
+        var r = new Random();
+
+        var r1 = r.Next(100, 900);
+
+        var r2 = r.Next(r1 + 5, 1000);
+        Dispatcher.Dispatch(new NewGameAction(r1, r2));
+    }
+}
