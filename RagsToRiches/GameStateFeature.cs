@@ -15,7 +15,7 @@ namespace RagsToRiches
             var finish = 33;
             var eTurns = Solver.SolveGame(start, finish, TransformType.All);
 
-            return new(28, 33, ImmutableList<Transform>.Empty, eTurns.Count);
+            return new(28, 33, ImmutableList<Transform>.Empty, ImmutableList<Transform>.Empty, eTurns.Count);
         }
     }
 }

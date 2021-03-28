@@ -7,30 +7,58 @@
 
     <MudText Typo="Typo.h6">@(GameState.Value.Turns)/@GameState.Value.ExpectedTurns  Turns</MudText>
 
-    <MudMenu Label="@GameState.Value.Start.ToString()" Direction="Direction.Bottom">
+    <MudMenu Label="@GameState.Value.Start.ToString()" Direction="Direction.Right" OffsetX="true" Color="GameState.Value.IsWon ? Color.Success :Color.Primary">
         @foreach (var transform in Transform.GetPossibleTransforms(GameState.Value.Start))
         {
-            <MudMenuItem OnClick="() => ApplyTransform(transform, 0)">@transform.Text</MudMenuItem>
+            <MudMenuItem OnClick="() => ApplyTransform(transform, 0, true)">@transform.Text</MudMenuItem>
         }
     </MudMenu>
+    <br/>
 
     @for (var index = 0; index < GameState.Value.StartTransforms.Count; index++)
     {
         var startTransform = GameState.Value.StartTransforms[index];
         var index1 = index;
 
-        <MudMenu Label="@startTransform.Result.ToString()" Direction="Direction.Bottom">
+        <MudMenu Label="@startTransform.Result.ToString()" Direction="Direction.Right" OffsetX="true" Color="GameState.Value.IsWon ? Color.Success :Color.Secondary">
 
             <MudMenuItem OnClick="() => RemoveTransform(index1)">x</MudMenuItem>
             @foreach (var transform in Transform.GetPossibleTransforms(startTransform.Result))
             {
-                <MudMenuItem OnClick="() => ApplyTransform(transform, index1 + 1)">@transform.Text</MudMenuItem>
+                <MudMenuItem OnClick="() => ApplyTransform(transform, index1 + 1, true)">@transform.Text</MudMenuItem>
             }
 
         </MudMenu>
+        <br />
     }
 
-    <MudChip Color="@(GameState.Value.IsWon ? Color.Success : Color.Default)" Text="@GameState.Value.Finish.ToString()"></MudChip>
+    <MudDivider/>
+
+    @for (var index = GameState.Value.FinishTransforms.Count - 1; index >= 0 ; index--)
+    {
+        var finishTransform = GameState.Value.FinishTransforms[index];
+        var index1 = index;
+
+        <MudMenu Label="@finishTransform.Result.ToString()" Direction="Direction.Right" OffsetX="true" Color="GameState.Value.IsWon ? Color.Success :Color.Secondary">
+
+            <MudMenuItem OnClick="() => RemoveTransform(index1)">x</MudMenuItem>
+            @foreach (var transform in Transform.GetPossibleTransforms(finishTransform.Result))
+            {
+                <MudMenuItem OnClick="() => ApplyTransform(transform, index1 + 1, false)">@transform.Text</MudMenuItem>
+            }
+
+        </MudMenu>
+        <br />
+    }
+
+
+    <MudMenu Label="@GameState.Value.Finish.ToString()" Direction="Direction.Right" OffsetX="true" Color="GameState.Value.IsWon ? Color.Success :Color.Primary">
+        @foreach (var transform in Transform.GetPossibleTransforms(GameState.Value.Finish))
+        {
+            <MudMenuItem OnClick="() => ApplyTransform(transform, 0, false)">@transform.Text</MudMenuItem>
+        }
+    </MudMenu>
+
 </MudContainer>
 
 
@@ -42,9 +70,9 @@
     [Inject]
     public IDispatcher Dispatcher { get; set; }
 
-    public void ApplyTransform(Transform transform, int index)
+    public void ApplyTransform(Transform transform, int index, bool start)
     {
-        Dispatcher.Dispatch(new ApplyTransformAction(transform.TransformType,  index));
+        Dispatcher.Dispatch(new ApplyTransformAction(transform.TransformType,  index, start));
     }
 
     public void RemoveTransform(int index)

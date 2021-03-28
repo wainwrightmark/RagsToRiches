@@ -9,7 +9,7 @@ namespace RagsToRiches
         {
             var sol = Solver.SolveGame(Start, Finish, TransformType.All).Count;
 
-            return new(Start, Finish, ImmutableList<Transform>.Empty, sol);
+            return new(Start, Finish, ImmutableList<Transform>.Empty, ImmutableList<Transform>.Empty, sol);
         }
     }
 }
