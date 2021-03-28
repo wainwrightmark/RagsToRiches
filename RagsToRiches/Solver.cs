@@ -7,6 +7,25 @@ namespace RagsToRiches
     public static class Solver
     {
 
+        public static ImmutableList<Transform> SolveGame2(int start, int finish,
+            IReadOnlyCollection<TransformType> transforms)
+        {
+            var l = SolveGame(start, finish, transforms);
+
+            var result = new List<Transform>();
+
+            var previous = l.First();
+
+            foreach (var i in l.Skip(1))
+            {
+                var t = TransformType.All.First(x => x.Function(previous) == i);
+                result.Add(new Transform(t, i));
+                previous = i;
+            }
+
+            return result.ToImmutableList();
+        }
+
         public static ImmutableList<int> SolveGame(int start, int finish, IReadOnlyCollection<TransformType> transforms)
         {
             if(start == finish)

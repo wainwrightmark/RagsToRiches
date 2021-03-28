@@ -55,12 +55,12 @@ namespace RagsToRiches
             public static Half Instance { get; } = new();
         }
 
-        public record Square() : TransformType(nameof(Square), x => x * x)
+        public record Square() : TransformType(nameof(Square), Sq)
         {
             public static Square Instance { get; } = new();
         }
 
-        public record Cube() : TransformType(nameof(Cube), x => x * x * x)
+        public record Cube() : TransformType(nameof(Cube), Cb)
         {
             public static Cube Instance { get; } = new();
         }
@@ -80,8 +80,8 @@ namespace RagsToRiches
         {
             var root = SqRoot(x);
             if (root is null) return null;
-            var rootInc = root + 1;
-            return rootInc * rootInc;
+            var rootInc = root.Value + 1;
+            return Sq(rootInc);
         })
         {
             public static NextSquare Instance { get; } = new();
@@ -91,8 +91,8 @@ namespace RagsToRiches
         {
             var root = CbRoot(x);
             if (root is null) return null;
-            var rootInc = root + 1;
-            return rootInc * rootInc * rootInc;
+            var rootInc = root.Value + 1;
+            return Cb(rootInc)  ;
         })
         {
             public static NextCube Instance { get; } = new();
@@ -102,8 +102,8 @@ namespace RagsToRiches
         {
             var root = SqRoot(x);
             if (root is null || root < 1) return null;
-            var rootInc = root - 1;
-            return rootInc * rootInc;
+            var rootDec = root.Value - 1;
+            return Sq(rootDec);
         })
         {
             public static PreviousSquare Instance { get; } = new();
@@ -113,8 +113,8 @@ namespace RagsToRiches
         {
             var root = CbRoot(x);
             if (root is null || root < 1) return null;
-            var rootInc = root - 1;
-            return rootInc * rootInc * rootInc;
+            var rootDec = root.Value - 1;
+            return Cb(rootDec);
         })
         {
             public static PreviousCube Instance { get; } = new();
@@ -184,6 +184,36 @@ namespace RagsToRiches
             }
 
             return null;
+        }
+
+        public static int? Sq(int i)
+        {
+            try
+            {
+                checked
+                {
+                    return i * i;
+                }
+            }
+            catch (OverflowException)
+            {
+                return null;
+            }
+        }
+
+        public static int? Cb(int i)
+        {
+            try
+            {
+                checked
+                {
+                    return i * i * i;
+                }
+            }
+            catch (OverflowException)
+            {
+                return null;
+            }
         }
 
         public static int? SqRoot(int i)

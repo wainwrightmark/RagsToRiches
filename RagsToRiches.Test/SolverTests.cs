@@ -20,11 +20,19 @@ namespace RagsToRiches.Test
         [Theory]
         [InlineData(1,2,2)]
         [InlineData(1,3,3)]
+        [InlineData(552, 693,8)]
+        [InlineData(328,484,7)]
         public void TestDistances(int start, int finish, int expectedDistance)
         {
-            var r = Solver.SolveGame(start, finish, TransformType.All.ToList());
+            var r = Solver.SolveGame2(start, finish, TransformType.All.ToList());
 
-            r.Count.Should().Be(expectedDistance);
+            foreach (var transform in r)
+            {
+                TestOutputHelper.WriteLine($"{transform.Result} {transform.TransformType.Name}");
+            }
+
+
+            r.Count.Should().Be(expectedDistance - 1);
         }
 
         [Fact]
