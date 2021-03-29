@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace RagsToRiches
 {
-    public abstract record TransformType(string Name, Func<int, int?> Function)
+    public abstract record TransformType(string Name, string Symbol, Func<int, int?> Function)
     {
         public static IReadOnlyCollection<TransformType> All { get; } = All1.ToList();
 
@@ -35,48 +35,49 @@ namespace RagsToRiches
         }
 
 
-        public record Increment() : TransformType(nameof(Increment), x => x + 1)
+        public record Increment() : TransformType(nameof(Increment), "+1", x => x + 1)
         {
             public static Increment Instance { get; } = new();
         }
 
-        public record Decrement() : TransformType(nameof(Decrement), x => x == 0 ? null : x - 1)
+        public record Decrement() : TransformType(nameof(Decrement), "−1", x => x == 0 ? null : x - 1)
         {
             public static Decrement Instance { get; } = new();
         }
 
-        public record Double() : TransformType(nameof(Double), x => x * 2)
+        public record Double() : TransformType(nameof(Double),  "×1", x => x * 2)
         {
             public static Double Instance { get; } = new();
         }
 
-        public record Half() : TransformType(nameof(Half), x => x % 2 == 0 ? x / 2 : null)
+        public record Half() : TransformType(nameof(Half), "¹⁄₂", x => x % 2 == 0 ? x / 2 : null)
         {
             public static Half Instance { get; } = new();
         }
 
-        public record Square() : TransformType(nameof(Square), Sq)
+        public record Square() : TransformType(nameof(Square),"x²", Sq)
         {
             public static Square Instance { get; } = new();
         }
 
-        public record Cube() : TransformType(nameof(Cube), Cb)
+        public record Cube() : TransformType(nameof(Cube),"x³", Cb)
         {
             public static Cube Instance { get; } = new();
         }
 
-        public record SquareRoot() : TransformType(nameof(SquareRoot), SqRoot)
+        public record SquareRoot() : TransformType(nameof(SquareRoot),"√", SqRoot)
         {
             public static SquareRoot Instance { get; } = new();
         }
 
-        public record CubeRoot() : TransformType(nameof(CubeRoot), CbRoot)
+        public record CubeRoot() : TransformType(nameof(CubeRoot),"∛", CbRoot)
         {
             public static CubeRoot Instance { get; } = new();
         }
 
 
-        public record NextSquare() : TransformType(nameof(NextSquare), x =>
+        public record NextSquare() : TransformType(nameof(NextSquare), "🠢□",
+            x =>
         {
             var root = SqRoot(x);
             if (root is null) return null;
@@ -87,7 +88,8 @@ namespace RagsToRiches
             public static NextSquare Instance { get; } = new();
         }
 
-        public record NextCube() : TransformType(nameof(NextCube), x =>
+        public record NextCube() : TransformType(nameof(NextCube), "🠢❒",
+            x =>
         {
             var root = CbRoot(x);
             if (root is null) return null;
@@ -98,7 +100,8 @@ namespace RagsToRiches
             public static NextCube Instance { get; } = new();
         }
 
-        public record PreviousSquare() : TransformType(nameof(PreviousSquare), x =>
+        public record PreviousSquare() : TransformType(nameof(PreviousSquare), "🠠□",
+            x =>
         {
             var root = SqRoot(x);
             if (root is null || root < 1) return null;
@@ -109,7 +112,8 @@ namespace RagsToRiches
             public static PreviousSquare Instance { get; } = new();
         }
 
-        public record PreviousCube() : TransformType(nameof(PreviousCube), x =>
+        public record PreviousCube() : TransformType(nameof(PreviousCube), "🠠❒",
+            x =>
         {
             var root = CbRoot(x);
             if (root is null || root < 1) return null;
@@ -120,20 +124,7 @@ namespace RagsToRiches
             public static PreviousCube Instance { get; } = new();
         }
 
-        public record PreviousPrime() : TransformType(nameof(PreviousPrime),
-            x =>
-            {
-                var index = Primes.IndexOf(x);
-                if (index > 0)
-                    return Primes[index - 1];
-                return null;
-            }
-        )
-        {
-            public static PreviousPrime Instance { get; } = new();
-        }
-
-        public record NextPrime() : TransformType(nameof(NextPrime),
+        public record NextPrime() : TransformType(nameof(NextPrime), "🠢p",
             x =>
             {
                 var index = Primes.IndexOf(x);
@@ -146,8 +137,21 @@ namespace RagsToRiches
             public static NextPrime Instance { get; } = new();
         }
 
+        public record PreviousPrime() : TransformType(nameof(PreviousPrime), "🠠p",
+            x =>
+            {
+                var index = Primes.IndexOf(x);
+                if (index > 0)
+                    return Primes[index - 1];
+                return null;
+            }
+        )
+        {
+            public static PreviousPrime Instance { get; } = new();
+        }
 
-        public record SwapDigits() : TransformType(nameof(SwapDigits),
+
+        public record SwapDigits() : TransformType(nameof(SwapDigits), "↔",
             x =>
             {
                 try

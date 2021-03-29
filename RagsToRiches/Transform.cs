@@ -15,6 +15,6 @@ namespace RagsToRiches
             }
         }
 
-        public string Text => TransformType.Name + "\t" + Result;
+        public string Text => TransformType.Symbol + "\t" + Result;
     }
 }
